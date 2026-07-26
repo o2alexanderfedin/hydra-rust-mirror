@@ -1,5 +1,5 @@
 use super::*;
-use crate::hydra_h::Command;
+use crate::hydra_h::{Command, RightMargin};
 
 pub(crate) extern "C" fn new_command(key: i8, name: *mut i8, command: *mut i8) -> *mut Command {
     let cmd: *mut Command =
@@ -77,7 +77,7 @@ pub(crate) extern "C" fn tree_add_command(
     if c as *mut () == 0 as *mut () {
         c = new_command(
             unsafe { *keys },
-            c"unnamed".as_ptr() as *mut i8,
+            c"unnamed".as_ptr() as *const i8 as *mut i8,
             core::ptr::null_mut(),
         );
         command_add_child(unsafe { &mut *tree }, c);
@@ -108,9 +108,9 @@ pub(crate) extern "C" fn print_command(c: &Command) -> i32 {
                 fprintf(
                     __stderrp,
                     c"%s%s:%s\n".as_ptr() as *mut i8 as *const i8,
-                    c"\u{1b}[0;34m".as_ptr() as *mut i8,
+                    c"\u{1b}[0;34m".as_ptr() as *const i8,
                     (*c).name,
-                    c"\u{1b}[0m".as_ptr() as *mut i8,
+                    c"\u{1b}[0m".as_ptr() as *const i8,
                 )
             };
             {
@@ -130,7 +130,7 @@ pub(crate) extern "C" fn print_command(c: &Command) -> i32 {
             }
             child = unsafe { (*child).next };
         }
-        max_line_width += 5;
+        max_line_width += RightMargin as i32;
         if max_line_width > width {
             max_line_width = width;
         }
@@ -151,15 +151,15 @@ pub(crate) extern "C" fn print_command(c: &Command) -> i32 {
                     fprintf(
                         __stderrp,
                         c"%s%c%s %s\u{2794}%s %s+%-*s%s".as_ptr() as *mut i8 as *const i8,
-                        c"\u{1b}[0;33m".as_ptr() as *mut i8,
+                        c"\u{1b}[0;33m".as_ptr() as *const i8,
                         unsafe { (*child).key } as i32,
-                        c"\u{1b}[0m".as_ptr() as *mut i8,
-                        c"\u{1b}[0;35m".as_ptr() as *mut i8,
-                        c"\u{1b}[0m".as_ptr() as *mut i8,
-                        c"\u{1b}[0;34m".as_ptr() as *mut i8,
+                        c"\u{1b}[0m".as_ptr() as *const i8,
+                        c"\u{1b}[0;35m".as_ptr() as *const i8,
+                        c"\u{1b}[0m".as_ptr() as *const i8,
+                        c"\u{1b}[0;34m".as_ptr() as *const i8,
                         max_line_width,
                         unsafe { (*child).name },
-                        c"\u{1b}[0m".as_ptr() as *mut i8,
+                        c"\u{1b}[0m".as_ptr() as *const i8,
                     )
                 };
             } else {
@@ -167,11 +167,11 @@ pub(crate) extern "C" fn print_command(c: &Command) -> i32 {
                     fprintf(
                         __stderrp,
                         c"%s%c%s %s\u{2794}%s  %-*s".as_ptr() as *mut i8 as *const i8,
-                        c"\u{1b}[0;33m".as_ptr() as *mut i8,
+                        c"\u{1b}[0;33m".as_ptr() as *const i8,
                         unsafe { (*child).key } as i32,
-                        c"\u{1b}[0m".as_ptr() as *mut i8,
-                        c"\u{1b}[0;35m".as_ptr() as *mut i8,
-                        c"\u{1b}[0m".as_ptr() as *mut i8,
+                        c"\u{1b}[0m".as_ptr() as *const i8,
+                        c"\u{1b}[0;35m".as_ptr() as *const i8,
+                        c"\u{1b}[0m".as_ptr() as *const i8,
                         max_line_width,
                         unsafe { (*child).name },
                     )

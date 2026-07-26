@@ -1,4 +1,4 @@
 # hydra-rust-mirror
 
 Generated artifact — do NOT hand-edit. Safe (uplift) Rust transpiled from
-https://github.com/emad-elsaid/hydra @ 92d59e3a440eb9ebe098551ba972c894b1601f7f by clang2rust 0.10.0-3299-g9fb6b28f. Upstream license: LICENSE.
+https://github.com/emad-elsaid/hydra @ 92d59e3a440eb9ebe098551ba972c894b1601f7f by clang2rust 0.10.0-3325-gef99d04b. Upstream license: LICENSE.
