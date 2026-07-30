@@ -16,7 +16,7 @@ pub(crate) type DarwinSsizeT = i64;
 pub(crate) type SpeedT = u64;
 
 #[repr(C)]
-#[derive(Copy, Clone)]
+#[derive(Copy, Clone, Default)]
 pub(crate) struct Winsize {
     pub(crate) ws_row: u16,
     pub(crate) ws_col: u16,
@@ -25,7 +25,7 @@ pub(crate) struct Winsize {
 }
 
 #[repr(C)]
-#[derive(Copy, Clone)]
+#[derive(Copy, Clone, Default)]
 pub(crate) struct Termios {
     pub(crate) c_iflag: u64,
     pub(crate) c_oflag: u64,
@@ -37,7 +37,7 @@ pub(crate) struct Termios {
 }
 
 #[repr(C)]
-#[derive(Copy, Clone)]
+#[derive(Copy, Clone, Default)]
 pub(crate) struct SFILE {
     pub(crate) _opaque: [u8; 0],
 }

@@ -13,7 +13,7 @@ pub const RightMargin: i32 = 5;
 pub const DefaultName: &str = "unnamed";
 
 #[repr(C)]
-#[derive(Copy, Clone)]
+#[derive(Copy, Clone, Default)]
 pub(crate) struct Command {
     pub(crate) key: i8,
     pub(crate) name: *mut i8,

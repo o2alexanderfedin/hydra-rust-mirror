@@ -4,9 +4,15 @@ use crate::hydra_h::{Command, RightMargin};
 pub(crate) extern "C" fn new_command(key: i8, name: *mut i8, command: *mut i8) -> *mut Command {
     let cmd: *mut Command =
         unsafe { calloc(1 as u64, core::mem::size_of::<Command>() as u64) } as *mut Command;
-    unsafe { (*cmd).key = key };
-    unsafe { (*cmd).name = name };
-    unsafe { (*cmd).command = command };
+    unsafe {
+        *cmd = Command {
+            key: key,
+            name: name,
+            command: command,
+            children: core::ptr::null_mut(),
+            next: core::ptr::null_mut(),
+        }
+    };
     return cmd;
 }
 
@@ -89,7 +95,7 @@ pub(crate) extern "C" fn tree_add_command(
 #[allow(unused_doc_comments)]
 pub(crate) extern "C" fn print_command(c: &Command) -> i32 {
     unsafe {
-        let mut terminal: Winsize = unsafe { core::mem::zeroed() };
+        let mut terminal: Winsize = Winsize::default();
         unsafe {
             ioctl(
                 2,
@@ -113,12 +119,7 @@ pub(crate) extern "C" fn print_command(c: &Command) -> i32 {
                     c"\u{1b}[0m".as_ptr() as *const i8,
                 )
             };
-            {
-                let __p = &mut lines;
-                let __t = *__p;
-                *__p += 1;
-                __t
-            };
+            lines += 1;
         }
         /// Find longest item
         let mut max_line_width: i32 = 0;
@@ -140,12 +141,7 @@ pub(crate) extern "C" fn print_command(c: &Command) -> i32 {
         (child = (*c).children);
         let mut current_item: i32 = 0;
         while !(child).is_null() {
-            {
-                let __p = &mut current_item;
-                let __t = *__p;
-                *__p += 1;
-                __t
-            };
+            current_item += 1;
             if unsafe { (*child).children } != core::ptr::null_mut() {
                 unsafe {
                     fprintf(
@@ -179,22 +175,12 @@ pub(crate) extern "C" fn print_command(c: &Command) -> i32 {
             }
             if current_item % items_per_row == 0 {
                 eprintln!("");
-                {
-                    let __p = &mut lines;
-                    let __t = *__p;
-                    *__p += 1;
-                    __t
-                };
+                lines += 1;
             }
             child = unsafe { (*child).next };
         }
         eprintln!("");
-        {
-            let __p = &mut lines;
-            let __t = *__p;
-            *__p += 1;
-            __t
-        };
+        lines += 1;
         return lines;
     }
 }
@@ -279,10 +265,9 @@ pub(crate) extern "C" fn read_field(file: &mut *mut i8, field: *mut i8) -> *mut 
         }
         unsafe { **file = 0 as i8 };
         {
+            let __n = 1;
             let __p = &mut *file;
-            let __t = *__p;
-            *__p = unsafe { (*__p).offset(1) };
-            __t
+            *__p = unsafe { (*__p).offset(__n as isize) };
         };
         return key;
     }
@@ -302,10 +287,9 @@ pub(crate) extern "C" fn read_until_eol(file: &mut *mut i8) -> *mut i8 {
     if unsafe { **file } as i32 == '\n' as i32 {
         unsafe { **file = 0 as i8 };
         {
+            let __n = 1;
             let __p = &mut *file;
-            let __t = *__p;
-            *__p = unsafe { (*__p).offset(1) };
-            __t
+            *__p = unsafe { (*__p).offset(__n as isize) };
         };
     }
     return s;
@@ -337,12 +321,7 @@ pub(crate) extern "C" fn clear_lines(count: i32) -> () {
                     eprint!("[A\r[2K");
                     break '__c6;
                 }
-                {
-                    let __p = &mut i;
-                    let __t = *__p;
-                    *__p += 1;
-                    __t
-                };
+                i += 1;
             }
         }
     }
